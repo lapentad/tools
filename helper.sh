@@ -14,6 +14,7 @@ Available functions:
   checkHelm             - Check and install Helm if not present.
   checkKubectl          - Check and install kubectl if not present.
   installGo             - Check and install Go programming language.
+  installKpt            - Check and install Kpt.
   installMongo          - Check and install MongoDB.
   installKind           - Check and install Kubernetes Kind.
   uninstallDocker       - Completely remove Docker and related files.
@@ -103,15 +104,24 @@ function checkKubectl() {
 function installGo() {
     if ! command -v go &> /dev/null; then
         echo "Go is not installed. Installing it..."
-        wget https://go.dev/dl/go1.20.4.linux-amd64.tar.gz
-        sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go1.20.4.linux-amd64.tar.gz
-        rm go1.20.4.linux-amd64.tar.gz
+        wget https://go.dev/dl/go1.24.5.linux-amd64.tar.gz
+        sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go1.24.5.linux-amd64.tar.gz
+        rm go1.24.5.linux-amd64.tar.gz
         echo 'export GOPATH=$HOME/go' >> ~/.bashrc
         echo 'export GOROOT=/usr/local/go' >> ~/.bashrc
         echo 'export PATH=$PATH:$GOPATH/bin:$GOROOT/bin' >> ~/.bashrc
         source ~/.bashrc
     else
         echo "Go is installed."
+    fi
+}
+
+function installKpt() {
+    if ! command -v kpt &> /dev/null; then
+        echo "Kpt is not installed. Installing it..."
+        go install -v github.com/kptdev/kpt@main
+    else
+        echo "Kpt is installed."
     fi
 }
 
@@ -225,6 +235,7 @@ case "$1" in
     checkHelm) checkHelm ;;
     checkKubectl) checkKubectl ;;
     installGo) installGo ;;
+    installKpt) installKpt ;;
     installMongo) installMongo ;;
     installKind) installKind ;;
     uninstallDocker) uninstallDocker ;;
